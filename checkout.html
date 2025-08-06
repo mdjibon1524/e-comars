@@ -44,6 +44,12 @@
     width: 100%; padding: 8px; margin-top: 5px;
     border: 1px solid #ccc; border-radius: 4px;
   }
+  select.size-select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 3px;
+  }
   .payment-options {
     display: flex;
     gap: 10px;
@@ -111,7 +117,8 @@
   <div class="payment-options">
     <label><input type="radio" name="payment" value="Card"><span>💳 Card</span></label>
     <label><input type="radio" name="payment" value="bKash"><span>📱 bKash</span></label>
-    <label><input type="radio" name="payment" value="COD"><span>💵 Cash On Delivery spanan></label>
+    <label><input type="radio" name="payment" value="Nagad"><span>📲 Nagad</span></label>
+    <label><input type="radio" name="payment" value="COD"><span>💵 COD</span></label>
   </div>
 
   <button type="submit" class="submit-btn">✅ অর্ডার সাবমিট করুন</button>
@@ -125,10 +132,6 @@ let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 function saveCart() {
   localStorage.setItem('cart', JSON.stringify(cart));
-}
-
-function updateCartCount() {
-  // index.html এ কাজ করবে
 }
 
 function renderCart() {
@@ -146,7 +149,12 @@ function renderCart() {
         <img src="${item.img}">
         <div class="cart-item-info">
           <h4>${item.name}</h4>
-          <p>সাইজ: <strong>${item.size || 'N/A'}</strong></p>
+          <label>সাইজ:</label>
+          <select class="size-select" onchange="changeSize(${index}, this.value)">
+            ${['S','M','L','XL','XXL'].map(size => `
+              <option value="${size}" ${item.size === size ? 'selected' : ''}>${size}</option>
+            `).join('')}
+          </select>
           <p>দাম: ৳${item.price}.00</p>
           <div class="qty-control">
             <button onclick="changeQty(${index}, -1)">-</button>
@@ -167,6 +175,11 @@ function renderCart() {
     <div class="total-price">ডেলিভারি চার্জ: ৳${DELIVERY_CHARGE}.00</div>
     <div class="total-price" style="color:#e91e63;font-size:20px;">সর্বমোট: ৳${grandTotal}.00</div>
   `;
+}
+
+function changeSize(index, newSize) {
+  cart[index].size = newSize;
+  saveCart();
 }
 
 function changeQty(index, delta) {
@@ -217,7 +230,6 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     document.getElementById('successMessage').textContent = '✅ অর্ডার সফলভাবে জমা হয়েছে!';
     localStorage.removeItem('cart');
     cart = [];
-    updateCartCount();
     renderCart();
     document.getElementById('orderForm').reset();
   }).catch(() => {
@@ -228,4 +240,4 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 renderCart();
 </script>
 </body>
-  </html>
+</html>
