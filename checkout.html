@@ -1,242 +1,232 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Checkout - Amarsupply</title>
+  <title>Checkout - Ecomars</title>
+  <meta name="description" content="Ecomars Checkout - আপনার অর্ডার সম্পন্ন করুন">
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 700px;
       margin: 20px auto;
-      background: #f9f9f9;
+      background: white;
       padding: 20px;
       border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     h2 {
       text-align: center;
       margin-bottom: 20px;
     }
     .cart-item {
-      background: white;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 5px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
     }
     .cart-item img {
       width: 80px;
       border-radius: 5px;
     }
-    .cart-item-info {
-      flex-grow: 1;
+    .cart-info {
+      flex: 1;
+      margin-left: 10px;
     }
-    .cart-item-info h4 {
-      margin: 0 0 5px 0;
-    }
-    .cart-item-info p {
-      margin: 0;
-      color: #555;
-    }
-    .qty-control {
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    .price {
+      color: #e91e63;
+      font-weight: bold;
     }
     .qty-control button {
-      padding: 4px 8px;
-      font-size: 16px;
+      padding: 3px 8px;
+      font-size: 14px;
       cursor: pointer;
     }
     form label {
-      display: block;
-      margin-top: 10px;
       font-weight: bold;
+      margin-top: 10px;
+      display: block;
     }
     form input, form textarea, form select {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
-      box-sizing: border-box;
       border: 1px solid #ccc;
       border-radius: 4px;
+      box-sizing: border-box;
     }
-    button.submit-btn {
-      margin-top: 20px;
-      background-color: #007bff;
+    .order-summary {
+      background: #f9f9f9;
+      padding: 10px;
+      margin-top: 15px;
+      border-radius: 5px;
+    }
+    .order-summary p {
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      background: #007bff;
       color: white;
       padding: 12px;
       border: none;
       border-radius: 5px;
       width: 100%;
       font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button.submit-btn:hover {
-      background-color: #0056b3;
-    }
-    .success-message {
-      color: green;
       margin-top: 15px;
-      text-align: center;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
     }
     .empty-cart {
       text-align: center;
+      padding: 40px;
       font-size: 18px;
-      margin-top: 40px;
       color: #777;
     }
   </style>
 </head>
 <body>
 
-  <h2>আমার কার্ট ও চেকআউট</h2>
+<header>🛒 আপনার কার্ট ও চেকআউট</header>
 
+<div class="container">
   <div id="cartItems"></div>
 
-  <h3>অর্ডার তথ্য</h3>
   <form id="orderForm">
-    <label for="name">নাম</label>
-    <input type="text" id="name" name="name" required />
+    <h2>অর্ডার তথ্য</h2>
 
-    <label for="email">ইমেইল</label>
-    <input type="email" id="email" name="email" required />
+    <label>নাম</label>
+    <input type="text" id="name" required>
 
-    <label for="address">ঠিকানা</label>
-    <textarea id="address" name="address" rows="3" required></textarea>
+    <label>ফোন</label>
+    <input type="tel" id="phone" required>
 
-    <label for="payment">পেমেন্ট মেথড</label>
-    <select id="payment" name="payment" required>
-      <option value="">-- পেমেন্ট সিলেক্ট করুন --</option>
+    <label>ইমেইল</label>
+    <input type="email" id="email" required>
+
+    <label>ঠিকানা</label>
+    <textarea id="address" rows="3" required></textarea>
+
+    <label>পেমেন্ট মেথড</label>
+    <select id="payment" required>
+      <option value="">-- সিলেক্ট করুন --</option>
       <option value="bKash">বিকাশ</option>
       <option value="Nagad">নগদ</option>
       <option value="Rocket">রকেট</option>
-      <option value="COD">Cash on Delivery (COD)</option>
+      <option value="COD">ক্যাশ অন ডেলিভারি</option>
     </select>
 
-    <button type="submit" class="submit-btn">অর্ডার সাবমিট করো</button>
+    <label>কুপন কোড (যদি থাকে)</label>
+    <input type="text" id="coupon" placeholder="কুপন কোড লিখুন">
+
+    <div class="order-summary">
+      <p><span>সাবটোটাল:</span> <span id="subtotal">৳0</span></p>
+      <p><span>ডেলিভারি চার্জ:</span> <span id="delivery">৳60</span></p>
+      <p><span>ডিসকাউন্ট:</span> <span id="discount">৳0</span></p>
+      <hr>
+      <p><strong>মোট:</strong> <strong id="total">৳0</strong></p>
+    </div>
+
+    <button type="submit">✅ অর্ডার সাবমিট করুন</button>
   </form>
+</div>
 
-  <p class="success-message" id="successMessage"></p>
+<script>
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const deliveryCharge = 60;
 
-  <script>
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  function renderCart(){
+    const container = document.getElementById('cartItems');
+    container.innerHTML = '';
 
-    function renderCart() {
-      const container = document.getElementById('cartItems');
-      container.innerHTML = '';
+    if(cart.length === 0){
+      container.innerHTML = '<div class="empty-cart">আপনার কার্ট খালি আছে। <a href="index.html">শপিং এ যান</a></div>';
+      document.querySelector('form').style.display = 'none';
+      return;
+    }
 
-      if(cart.length === 0) {
-        container.innerHTML = '<p class="empty-cart">তোমার কার্ট খালি আছে। <a href="index.html">শপিং এ যাও</a></p>';
-        return;
-      }
-
-      cart.forEach((item, index) => {
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-          <img src="${item.img}" alt="${item.name}" />
-          <div class="cart-item-info">
-            <h4>${item.name}</h4>
-            <p>দাম: ৳${item.price}.00</p>
-            <p>পরিমাণ: ${item.qty}</p>
-            <div class="qty-control">
-              <button onclick="changeQty(${index}, -1)">-</button>
-              <button onclick="changeQty(${index}, 1)">+</button>
-              <button onclick="removeItem(${index})" style="margin-left:10px; color:red;">❌</button>
-            </div>
+    cart.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <div class="cart-info">
+          <h4>${item.name}</h4>
+          <p class="price">৳${item.price}</p>
+          <p>পরিমাণ: ${item.qty}</p>
+          <div class="qty-control">
+            <button onclick="changeQty(${index}, -1)">-</button>
+            <button onclick="changeQty(${index}, 1)">+</button>
+            <button onclick="removeItem(${index})">❌</button>
           </div>
-        `;
-        container.appendChild(div);
-      });
-
-      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-      const totalDiv = document.createElement('div');
-      totalDiv.style.textAlign = 'right';
-      totalDiv.style.fontWeight = 'bold';
-      totalDiv.style.marginTop = '20px';
-      totalDiv.textContent = `মোট দাম: ৳${total}.00`;
-      container.appendChild(totalDiv);
-    }
-
-    function changeQty(index, delta) {
-      cart[index].qty += delta;
-      if(cart[index].qty <= 0) {
-        cart.splice(index, 1);
-      }
-      saveCart();
-      renderCart();
-    }
-
-    function removeItem(index) {
-      cart.splice(index, 1);
-      saveCart();
-      renderCart();
-    }
-
-    function saveCart() {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-
-    const orderForm = document.getElementById('orderForm');
-    const successMessage = document.getElementById('successMessage');
-
-    orderForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      if(cart.length === 0) {
-        alert('দয়া করে আগে কার্টে পণ্য যোগ করুন');
-        return;
-      }
-
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const address = document.getElementById('address').value.trim();
-      const payment = document.getElementById('payment').value;
-
-      if(!payment) {
-        alert('অনুগ্রহ করে পেমেন্ট মেথড সিলেক্ট করুন');
-        return;
-      }
-
-      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-
-      const orderData = {
-        name,
-        email,
-        address,
-        payment,
-        cart,
-        total
-      };
-
-      fetch('https://script.google.com/macros/s/AKfycbyj2f8CKjrYtuRAG7_6YXZm4x2flTD1f4VxqECPZetIsWEFZQkpygCpaoFFVoaLWuK-/exec', {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      })
-      .then(() => {
-        successMessage.textContent = 'অর্ডার সফলভাবে জমা হয়েছে, ধন্যবাদ!';
-        orderForm.reset();
-        cart = [];
-        saveCart();
-        renderCart();
-      })
-      .catch((error) => {
-        alert('কিছু সমস্যা হয়েছে, পরে আবার চেষ্টা করুন।');
-        console.error('Error:', error);
-      });
+        </div>
+      `;
+      container.appendChild(div);
     });
+    updateSummary();
+  }
 
+  function changeQty(index, delta){
+    cart[index].qty += delta;
+    if(cart[index].qty <= 0) cart.splice(index, 1);
+    saveCart();
     renderCart();
-  </script>
+  }
+
+  function removeItem(index){
+    cart.splice(index, 1);
+    saveCart();
+    renderCart();
+  }
+
+  function saveCart(){
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  function updateSummary(){
+    const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+    document.getElementById('subtotal').textContent = `৳${subtotal}`;
+    let discount = 0;
+
+    const coupon = document.getElementById('coupon').value.trim();
+    if(coupon.toLowerCase() === 'ecomars10'){
+      discount = subtotal * 0.10;
+    }
+
+    document.getElementById('discount').textContent = `৳${discount}`;
+    const total = subtotal + deliveryCharge - discount;
+    document.getElementById('total').textContent = `৳${total}`;
+  }
+
+  document.getElementById('coupon').addEventListener('input', updateSummary);
+
+  document.getElementById('orderForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    if(cart.length === 0) return alert('আপনার কার্ট খালি');
+    alert('🎉 আপনার অর্ডার সফলভাবে জমা হয়েছে!');
+    localStorage.removeItem('cart');
+    window.location.href = 'index.html';
+  });
+
+  renderCart();
+</script>
 
 </body>
-</html>
+  </html>
