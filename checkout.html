@@ -37,10 +37,10 @@
     text-align: right;
     font-weight: bold;
     font-size: 18px;
-    margin-top: 15px;
+    margin-top: 10px;
   }
   form label { display: block; margin-top: 10px; font-weight: bold; }
-  form input, form textarea, form select {
+  form input, form textarea {
     width: 100%; padding: 8px; margin-top: 5px;
     border: 1px solid #ccc; border-radius: 4px;
   }
@@ -111,7 +111,8 @@
   <div class="payment-options">
     <label><input type="radio" name="payment" value="Card"><span>💳 Card</span></label>
     <label><input type="radio" name="payment" value="bKash"><span>📱 bKash</span></label>
-   <label><input type="radio" name="payment" value="COD"><span>💵 COD</span></label>
+    <label><input type="radio" name="payment" value="Nagad"><span>📲 Nagad</span></label>
+    <label><input type="radio" name="payment" value="COD"><span>💵 COD</span></label>
   </div>
 
   <button type="submit" class="submit-btn">✅ অর্ডার সাবমিট করুন</button>
@@ -119,9 +120,18 @@
 
 <p class="success-message" id="successMessage"></p>
 
-<script src="products.js"></script>
-<script src="cart.js"></script>
 <script>
+const DELIVERY_CHARGE = 100;
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function updateCartCount() {
+  // index.html এ কাজ করবে, এখানে শুধু placeholder
+}
+
 function renderCart() {
   const container = document.getElementById('cartItems');
   container.innerHTML = '';
@@ -149,8 +159,14 @@ function renderCart() {
     `;
   });
 
-  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  container.innerHTML += `<div class="total-price">মোট: ৳${total}.00</div>`;
+  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const grandTotal = productTotal + DELIVERY_CHARGE;
+
+  container.innerHTML += `
+    <div class="total-price">পণ্যের মোট: ৳${productTotal}.00</div>
+    <div class="total-price">ডেলিভারি চার্জ: ৳${DELIVERY_CHARGE}.00</div>
+    <div class="total-price" style="color:#e91e63;font-size:20px;">সর্বমোট: ৳${grandTotal}.00</div>
+  `;
 }
 
 function changeQty(index, delta) {
@@ -183,9 +199,13 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     return;
   }
 
+  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const grandTotal = productTotal + DELIVERY_CHARGE;
+
   const orderData = {
     name, email, address, payment: payment.value,
-    cart, total: cart.reduce((sum, i) => sum + i.price * i.qty, 0)
+    cart, productTotal, deliveryCharge: DELIVERY_CHARGE,
+    total: grandTotal
   };
 
   fetch('https://script.google.com/macros/s/AKfycbyj2f8CKjrYtuRAG7_6YXZm4x2flTD1f4VxqECPZetIsWEFZQkpygCpaoFFVoaLWuK-/exec', {
@@ -208,4 +228,4 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 renderCart();
 </script>
 </body>
-</html>
+  </html>
