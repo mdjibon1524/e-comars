@@ -111,7 +111,7 @@
   <div class="payment-options">
     <label><input type="radio" name="payment" value="Card"><span>💳 Card</span></label>
     <label><input type="radio" name="payment" value="bKash"><span>📱 bKash</span></label>
-      <label><input type="radio" name="payment" value="COD"><span>💵 Cash On Delivery</span></label>
+   <label><input type="radio" name="payment" value="COD"><span>💵 COD</span></label>
   </div>
 
   <button type="submit" class="submit-btn">✅ অর্ডার সাবমিট করুন</button>
@@ -149,13 +149,9 @@ function renderCart() {
     `;
   });
 
-  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  const grandTotal = productTotal + DELIVERY_CHARGE;
-
-  container.innerHTML += `
-    <div class="total-price">পণ্যের মোট: ৳${productTotal}.00</div>
-    <div class="total-price">ডেলিভারি চার্জ: ৳${DELIVERY_CHARGE}.00</div>
-    <div class="total-price" style="color:#e91e63;font-size:20px;">সর্বমোট: ৳${grandTotal}.00</div>`;}
+  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  container.innerHTML += `<div class="total-price">মোট: ৳${total}.00</div>`;
+}
 
 function changeQty(index, delta) {
   cart[index].qty += delta;
@@ -212,4 +208,4 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 renderCart();
 </script>
 </body>
-  </html>
+</html>
