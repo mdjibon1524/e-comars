@@ -152,12 +152,9 @@ function renderCart() {
   });
 
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  container.innerHTML += `
-    <div class="total-price">পণ্যের মোট: ৳${productTotal}.00</div>
-    <div class="total-price">ডেলিভারি চার্জ: ৳${DELIVERY_CHARGE}.00</div>
-    <div class="total-price" style="color:#e91e63;font-size:20px;">সর্বমোট: ৳${grandTotal}.00</div>
-  `;
-}c
+  container.innerHTML += `<div class="total-price">মোট: ৳${total}.00</div>
+  <div class="delivery-cherge">ডেলিভারি চার্জ: ৳100.00</div>`;
+}
 
 function changeQty(index, delta) {
   cart[index].qty += delta;
@@ -214,65 +211,4 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 renderCart();
 </script>
 </body>
-</html>    <div class="total-price" style="color:#e91e63;font-size:20px;">সর্বমোট: ৳${grandTotal}.00</div>
-  `;
-}
-
-function changeQty(index, delta) {
-  cart[index].qty += delta;
-  if (cart[index].qty <= 0) cart.splice(index, 1);
-  saveCart();
-  renderCart();
-}
-
-function removeItem(index) {
-  cart.splice(index, 1);
-  saveCart();
-  renderCart();
-}
-
-document.getElementById('orderForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  if (cart.length === 0) {
-    alert('কার্ট খালি!');
-    return;
-  }
-
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const address = document.getElementById('address').value.trim();
-  const payment = document.querySelector('input[name="payment"]:checked');
-
-  if (!payment) {
-    alert('পেমেন্ট মেথড সিলেক্ট করুন');
-    return;
-  }
-
-  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  const grandTotal = productTotal + DELIVERY_CHARGE;
-
-  const orderData = {
-    name, email, address, payment: payment.value,
-    cart, productTotal, deliveryCharge: DELIVERY_CHARGE,
-    total: grandTotal
-  };
-
-  fetch('https://script.google.com/macros/s/AKfycbyj2f8CKjrYtuRAG7_6YXZm4x2flTD1f4VxqECPZetIsWEFZQkpygCpaoFFVoaLWuK-/exec', {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(orderData)
-  }).then(() => {
-    document.getElementById('successMessage').textContent = '✅ অর্ডার সফলভাবে জমা হয়েছে!';
-    localStorage.removeItem('cart');
-    cart = [];
-    updateCartCount();
-    renderCart();
-    document.getElementById('orderForm').reset();
-  }).catch(() => {
-    alert('কিছু সমস্যা হয়েছে, পরে চেষ্টা করুন।');
-  });
-});
-
-renderCart();
-  </script>
+  </html>
