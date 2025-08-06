@@ -1,129 +1,6 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Checkout - E-commerce</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: auto;
-    background: #f9f9f9;
-    padding: 20px;
-  }
-  h2 { text-align: center; margin-bottom: 20px; }
-  .cart-item {
-    background: white;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  }
-  .cart-item img {
-    width: 80px;
-    border-radius: 5px;
-  }
-  .cart-item-info { flex-grow: 1; }
-  .cart-item-info h4 { margin: 0 0 5px; }
-  .qty-control button {
-    padding: 4px 8px;
-    cursor: pointer;
-  }
-  .total-price {
-    text-align: right;
-    font-weight: bold;
-    font-size: 18px;
-    margin-top: 15px;
-  }
-  form label { display: block; margin-top: 10px; font-weight: bold; }
-  form input, form textarea, form select {
-    width: 100%; padding: 8px; margin-top: 5px;
-    border: 1px solid #ccc; border-radius: 4px;
-  }
-  .payment-options {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .payment-options label {
-    background: white;
-    border: 1px solid #ccc;
-    padding: 8px;
-    flex: 1;
-    text-align: center;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .payment-options input { display: none; }
-  .payment-options input:checked + span {
-    background: #007bff;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-  }
-  button.submit-btn {
-    margin-top: 20px;
-    background: #007bff;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 5px;
-    width: 100%;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  button.submit-btn:hover { background: #0056b3; }
-  .success-message {
-    text-align: center;
-    color: green;
-    margin-top: 15px;
-  }
-  .empty-cart {
-    text-align: center;
-    font-size: 18px;
-    margin-top: 40px;
-    color: #777;
-  }
-</style>
-</head>
-<body>
-
-<h2>🛒 আপনার কার্ট ও চেকআউট</h2>
-
-<div id="cartItems"></div>
-
-<h3>অর্ডার তথ্য</h3>
-<form id="orderForm">
-  <label for="name">নাম</label>
-  <input type="text" id="name" required>
-
-  <label for="email">ইমেইল</label>
-  <input type="email" id="email" required>
-
-  <label for="address">ঠিকানা</label>
-  <textarea id="address" rows="3" required></textarea>
-
-  <label>পেমেন্ট মেথড</label>
-  <div class="payment-options">
-    <label><input type="radio" name="payment" value="Card"><span>💳 Card</span></label>
-    <label><input type="radio" name="payment" value="bKash"><span>📱 bKash</span></label>
-    <label><input type="radio" name="payment" value="Nagad"><span>📲 Nagad</span></label>
-    <label><input type="radio" name="payment" value="Rocket"><span>🚀 Rocket</span></label>
-    <label><input type="radio" name="payment" value="COD"><span>💵 COD</span></label>
-  </div>
-
-  <button type="submit" class="submit-btn">✅ অর্ডার সাবমিট করুন</button>
-</form>
-
-<p class="success-message" id="successMessage"></p>
-
-<script src="products.js"></script>
-<script src="cart.js"></script>
 <script>
+const DELIVERY_CHARGE = 100;
+
 function renderCart() {
   const container = document.getElementById('cartItems');
   container.innerHTML = '';
@@ -151,8 +28,14 @@ function renderCart() {
     `;
   });
 
-  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-  container.innerHTML += `<div class="total-price">মোট: ৳${total}.00</div>`;
+  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const grandTotal = productTotal + DELIVERY_CHARGE;
+
+  container.innerHTML += `
+    <div class="total-price">পণ্যের মোট: ৳${productTotal}.00</div>
+    <div class="total-price">ডেলিভারি চার্জ: ৳${DELIVERY_CHARGE}.00</div>
+    <div class="total-price" style="color:#e91e63;font-size:20px;">সর্বমোট: ৳${grandTotal}.00</div>
+  `;
 }
 
 function changeQty(index, delta) {
@@ -185,9 +68,13 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     return;
   }
 
+  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const grandTotal = productTotal + DELIVERY_CHARGE;
+
   const orderData = {
     name, email, address, payment: payment.value,
-    cart, total: cart.reduce((sum, i) => sum + i.price * i.qty, 0)
+    cart, productTotal, deliveryCharge: DELIVERY_CHARGE,
+    total: grandTotal
   };
 
   fetch('https://script.google.com/macros/s/AKfycbyj2f8CKjrYtuRAG7_6YXZm4x2flTD1f4VxqECPZetIsWEFZQkpygCpaoFFVoaLWuK-/exec', {
@@ -208,6 +95,4 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 });
 
 renderCart();
-</script>
-</body>
-</html>
+  </script>
