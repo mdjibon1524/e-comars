@@ -52,47 +52,73 @@
 </div>
 
 <script src="products.js"></script>
-<script src="cart.js"></script>
 <script>
-  let filteredProducts = [...products];
+// কার্ট ডাটা লোড
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+function updateCartCount() {
+  const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
+  document.getElementById('cartCount').textContent = cartCount;
+}
+function openCart() {
+  window.location.href = 'checkout.html';
+}
 
-  function renderProducts() {
-    const grid = document.getElementById('productGrid');
-    grid.innerHTML = '';
-    filteredProducts.forEach(p => {
-      grid.innerHTML += `
-        <div class="product-card">
-          <img src="${p.img}" alt="${p.name}" onclick="showImage('${p.img}')">
-          <h4>${p.name}</h4>
-          <p class="price">৳${p.price}.00 <span class="old-price">৳${p.oldPrice}.00</span></p>
-          <p>Size: ${p.sizes.join(', ')}</p>
-          <button class="add-to-cart" onclick="addToCart(${p.id})">Add to Cart</button>
-        </div>
-      `;
-    });
-  }
+// নতুন Add to Cart → সরাসরি Checkout
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+  cart = []; // আগের কার্ট খালি
+  cart.push({ ...product, qty: 1 });
+  saveCart();
+  window.location.href = 'checkout.html';
+}
 
-  function filterProducts(cat) {
-    if (cat === 'all') {
-      filteredProducts = [...products];
-    } else {
-      filteredProducts = products.filter(p => p.category === cat);
-    }
-    renderProducts();
-  }
-
-  function showImage(src) {
-    document.getElementById('popupImg').src = src;
-    document.getElementById('imgPopup').style.display = 'flex';
-  }
-
-  document.getElementById('searchInput').addEventListener('input', function() {
-    const searchVal = this.value.toLowerCase();
-    filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchVal));
-    renderProducts();
+// প্রোডাক্ট রেন্ডার
+let filteredProducts = [...products];
+function renderProducts() {
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+  filteredProducts.forEach(p => {
+    grid.innerHTML += `
+      <div class="product-card">
+        <img src="${p.img}" alt="${p.name}" onclick="showImage('${p.img}')">
+        <h4>${p.name}</h4>
+        <p class="price">৳${p.price}.00 <span class="old-price">৳${p.oldPrice}.00</span></p>
+        <p>Size: ${p.sizes.join(', ')}</p>
+        <button class="add-to-cart" onclick="addToCart(${p.id})">Add to Cart</button>
+      </div>
+    `;
   });
+}
 
+// ফিল্টার
+function filterProducts(cat) {
+  if (cat === 'all') {
+    filteredProducts = [...products];
+  } else {
+    filteredProducts = products.filter(p => p.category === cat);
+  }
   renderProducts();
+}
+
+// সার্চ
+document.getElementById('searchInput').addEventListener('input', function() {
+  const searchVal = this.value.toLowerCase();
+  filteredProducts = products.filter(p => p.name.toLowerCase().includes(searchVal));
+  renderProducts();
+});
+
+// ইমেজ Popup
+function showImage(src) {
+  document.getElementById('popupImg').src = src;
+  document.getElementById('imgPopup').style.display = 'flex';
+}
+
+updateCartCount();
+renderProducts();
 </script>
 </body>
 </html>
