@@ -3,50 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Rupa Shop - T-shirt Shop</title>
+  <title>Ecomars - অনলাইন শপ</title>
+  <meta name="description" content="Ecomars - বাংলাদেশে সেরা অনলাইন শপ। সাশ্রয়ী মূল্যে মানসম্পন্ন পণ্য কিনুন।">
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f5f5;
-      margin: 0;
-      padding: 0;
     }
     header {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+    .search-bar {
+      flex: 1;
+      max-width: 400px;
+      margin: 10px;
+      display: flex;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 4px 0 0 4px;
+      outline: none;
+    }
+    .search-bar button {
+      background: #e91e63;
+      border: none;
+      color: white;
+      padding: 8px 15px;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+    }
+    nav {
       background: #fff;
-      padding: 15px 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 8px;
       text-align: center;
-      font-size: 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    nav a {
+      margin: 0 10px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .banner {
+      background: url('https://i.imgur.com/OUo7TLO.jpg') center/cover no-repeat;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 28px;
       font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
       gap: 15px;
       padding: 20px;
-      max-width: 1000px;
+      max-width: 1100px;
       margin: auto;
     }
     .product-card {
-      background: #fff;
+      background: white;
       border-radius: 8px;
+      overflow: hidden;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      padding: 15px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
     }
     .product-card img {
       width: 100%;
-      border-radius: 8px;
-      object-fit: cover;
       height: 200px;
+      object-fit: cover;
     }
     .product-info {
-      margin-top: 10px;
+      padding: 15px;
+      flex: 1;
     }
     .product-info h4 {
       margin: 5px 0;
+      font-size: 16px;
     }
     .price {
       color: #e91e63;
@@ -54,31 +103,20 @@
     }
     .old-price {
       text-decoration: line-through;
-      color: #999;
-      font-weight: normal;
-      margin-left: 8px;
+      color: #777;
       font-size: 14px;
-    }
-    .size-select {
-      margin: 8px 0;
-      font-size: 14px;
-      color: #555;
+      margin-left: 5px;
     }
     button.add-to-cart {
       background: #007bff;
       border: none;
       color: white;
-      padding: 10px;
-      border-radius: 5px;
+      padding: 8px;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       margin-top: 10px;
-      transition: background 0.3s;
     }
-    button.add-to-cart:hover {
-      background: #0056b3;
-    }
-    /* Cart button fixed bottom */
     .cart-btn {
       position: fixed;
       bottom: 20px;
@@ -108,149 +146,121 @@
       line-height: 18px;
       font-weight: bold;
     }
+    footer {
+      background: #222;
+      color: #eee;
+      padding: 20px;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+    footer a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
 
-<header>Rupa Shop - টিশার্ট শপ</header>
+<header>
+  <h1>Ecomars</h1>
+  <div class="search-bar">
+    <input type="text" placeholder="পণ্য খুঁজুন..." id="searchInput">
+    <button onclick="searchProducts()">🔍</button>
+  </div>
+</header>
 
-<div class="product-grid" id="productGrid">
-  <!-- প্রোডাক্ট কার্ড এখানে যোগ হবে -->
+<nav>
+  <a href="#">হোম</a>
+  <a href="#">পুরুষদের পোশাক</a>
+  <a href="#">মহিলাদের পোশাক</a>
+  <a href="#">ইলেকট্রনিক্স</a>
+  <a href="#">অফার</a>
+</nav>
+
+<div class="banner">
+  আজকের বিশেষ অফার
 </div>
+
+<div class="product-grid" id="productGrid"></div>
 
 <div class="cart-btn" onclick="openCart()">
   🛒 <span class="cart-count" id="cartCount">0</span>
 </div>
 
+<footer>
+  📞 ফোন: <a href="tel:+8801343211006">+8801343211006</a> | 
+  💬 WhatsApp: <a href="https://wa.me/8801581200177" target="_blank">+8801581200177</a> <br>
+  📧 ইমেইল: <a href="mailto:oneevery398@gmail.com">oneevery398@gmail.com</a> <br>
+  🏠 ঠিকানা: তেতুলিয়া, পঞ্চগড়, বাংলাদেশ <br>
+  <small>© ২০২৫ Ecomars - সর্বস্বত্ব সংরক্ষিত</small>
+</footer>
+
 <script>
-  // তোমার প্রোডাক্ট ডাটা (ছবি, নাম, দাম, সাইজ)
   const products = [
-    {
-      id: 1,
-      name: "Premium Polo Shirt",
-      price: 500,
-      oldPrice: 600,
-      sizes: ["S", "M", "L", "XL"],
-      img: "https://i.imgur.com/G8CUkng.jpeg"
-    },
-    {
-      id: 2,
-      name: "Ladies Premium Full Cotton Half Sleeve T-Shirt – DTF Print Edition",
-      price: 350,
-      oldPrice: 500,
-      sizes: ["M", "L"],
-      img: "https://i.imgur.com/enndo4a.jpeg"
-    },
-	{
-      id: 2,
-      name: "Ladies Premium Full Cotton Half Sleeve T-Shirt – DTF Print Edition",
-      price: 350,
-      oldPrice: 500,
-      sizes: ["M", "L"],
-      img: "https://i.imgur.com/enndo4a.jpeg"
-    },
-	{
-      id: 2,
-      name: "Ladies Premium Full Cotton Half Sleeve T-Shirt – DTF Print Edition",
-      price: 350,
-      oldPrice: 500,
-      sizes: ["M", "L"],
-      img: "https://i.imgur.com/enndo4a.jpeg"
-    },
-	{
-      id: 2,
-      name: "Ladies Premium Full Cotton Half Sleeve T-Shirt – DTF Print Edition",
-      price: 350,
-      oldPrice: 500,
-      sizes: ["M", "L"],
-      img: "https://i.imgur.com/enndo4a.jpeg"
-    },
-	{
-      id: 2,
-      name: "Ladies Premium Full Cotton Half Sleeve T-Shirt – DTF Print Edition",
-      price: 350,
-      oldPrice: 500,
-      sizes: ["M", "L"],
-      img: "https://i.imgur.com/enndo4a.jpeg"
-    },
-    {
-      id: 3,
-      name: "Mash T-Shirt and Short Pant Set.jpg",
-      price: 400,
-      oldPrice: 550,
-      sizes: ["S", "M", "L", "XL"],
-      img: "https://i.imgur.com/G8CUkng.jpeg"
-    }
+    {id:1, name:"Premium Polo Shirt", price:500, oldPrice:600, img:"https://i.imgur.com/G8CUkng.jpeg"},
+    {id:2, name:"Ladies Premium T-Shirt", price:350, oldPrice:500, img:"https://i.imgur.com/enndo4a.jpeg"},
+    {id:3, name:"Mash T-Shirt & Pant Set", price:400, oldPrice:550, img:"https://i.imgur.com/G8CUkng.jpeg"}
   ];
 
   let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-  function updateCartCount() {
-    const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
-    document.getElementById('cartCount').textContent = cartCount;
+  function updateCartCount(){
+    document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.qty, 0);
   }
-
-  function saveCart() {
+  function saveCart(){
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCount();
   }
-
-  function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    if(!product) return;
-
-    // সাইজ চাইলে এখানে যুক্ত করতে পারো (simplified version নিচে)
-
-    // Check if already in cart
-    const cartItemIndex = cart.findIndex(item => item.id === productId);
-    if(cartItemIndex > -1) {
-      cart[cartItemIndex].qty += 1;
-    } else {
-      cart.push({...product, qty: 1});
-    }
+  function addToCart(id){
+    const p = products.find(x=>x.id===id);
+    const index = cart.findIndex(x=>x.id===id);
+    if(index>-1){cart[index].qty++;} else {cart.push({...p, qty:1});}
     saveCart();
-    alert(`${product.name} কার্টে যোগ হয়েছে!`);
+    alert(`${p.name} কার্টে যোগ হয়েছে`);
   }
-
-  function renderProducts() {
-    const grid = document.getElementById('productGrid');
-    grid.innerHTML = '';
-    products.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-
-      card.innerHTML = `
-        <img src="${p.img}" alt="${p.name}" />
+  function renderProducts(){
+    const grid=document.getElementById('productGrid');
+    grid.innerHTML="";
+    products.forEach(p=>{
+      const div=document.createElement('div');
+      div.className="product-card";
+      div.innerHTML=`
+        <img src="${p.img}" alt="${p.name}">
         <div class="product-info">
           <h4>${p.name}</h4>
-          <p class="price">৳${p.price}.00 <span class="old-price">৳${p.oldPrice}.00</span></p>
-          <p class="size-select">Size: ${p.sizes.join(', ')}</p>
+          <p class="price">৳${p.price} <span class="old-price">৳${p.oldPrice}</span></p>
           <button class="add-to-cart" onclick="addToCart(${p.id})">Add to Cart</button>
         </div>
       `;
-
-      grid.appendChild(card);
+      grid.appendChild(div);
     });
   }
-
-  function openCart() {
-    // Cart পেজে রিডাইরেক্ট দাও
-    window.location.href = 'checkout.html';
+  function openCart(){
+    window.location.href="checkout.html";
   }
-
-  // Initialization
+  function searchProducts(){
+    const term=document.getElementById('searchInput').value.toLowerCase();
+    const filtered=products.filter(p=>p.name.toLowerCase().includes(term));
+    const grid=document.getElementById('productGrid');
+    grid.innerHTML="";
+    filtered.forEach(p=>{
+      const div=document.createElement('div');
+      div.className="product-card";
+      div.innerHTML=`
+        <img src="${p.img}" alt="${p.name}">
+        <div class="product-info">
+          <h4>${p.name}</h4>
+          <p class="price">৳${p.price} <span class="old-price">৳${p.oldPrice}</span></p>
+          <button class="add-to-cart" onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+      `;
+      grid.appendChild(div);
+    });
+  }
   renderProducts();
   updateCartCount();
 </script>
-<!-- index.html এর body এর শেষে, </body> এর আগে বসাবে -->
-
-<footer style="background:#222; color:#eee; padding:20px; text-align:center; font-size:14px;">
-  <p>📞 ফোন: <a href="tel:+8801581200177" style="color:#4CAF50; text-decoration:none;">+8801343211006</a></p>
-  <p>💬 WhatsApp: <a href="https://wa.me/8801581200177" target="_blank" style="color:#4CAF50; text-decoration:none;">+8801581200177</a></p>
-  <p>📧 ইমেইল: <a href="sotoanul@gmail.com" style="color:#4CAF50; text-decoration:none;">oneevery398@gmail.com</a></p>
-  <p>🏠 ঠিকানা: তেতুলিয়া,পঞ্চগড়, বাংলাদেশ</p>
-  <p style="margin-top:10px; font-size:12px; color:#777;">© ২০২৫ রুপা সাব - বিশ্বস্ত</p>
-</footer>
 
 </body>
-</html>
+	</html>
