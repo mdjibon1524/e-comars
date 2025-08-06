@@ -111,8 +111,7 @@
   <div class="payment-options">
     <label><input type="radio" name="payment" value="Card"><span>💳 Card</span></label>
     <label><input type="radio" name="payment" value="bKash"><span>📱 bKash</span></label>
-    <label><input type="radio" name="payment" value="Nagad"><span>📲 Nagad</span></label>
-    <label><input type="radio" name="payment" value="COD"><span>💵 COD</span></label>
+    <label><input type="radio" name="payment" value="COD"><span>💵 Cash On Delivery spanan></label>
   </div>
 
   <button type="submit" class="submit-btn">✅ অর্ডার সাবমিট করুন</button>
@@ -129,7 +128,7 @@ function saveCart() {
 }
 
 function updateCartCount() {
-  // index.html এ কাজ করবে, এখানে শুধু placeholder
+  // index.html এ কাজ করবে
 }
 
 function renderCart() {
@@ -147,6 +146,7 @@ function renderCart() {
         <img src="${item.img}">
         <div class="cart-item-info">
           <h4>${item.name}</h4>
+          <p>সাইজ: <strong>${item.size || 'N/A'}</strong></p>
           <p>দাম: ৳${item.price}.00</p>
           <div class="qty-control">
             <button onclick="changeQty(${index}, -1)">-</button>
