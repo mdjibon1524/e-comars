@@ -1,42 +1,259 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <title>Order Checkout</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Checkout - E-commerce</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: auto;
+    background: #f9f9f9;
+    padding: 20px;
+  }
+  h2 { text-align: center; margin-bottom: 20px; }
+  .cart-item {
+    background: white;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .cart-item img {
+    width: 80px;
+    border-radius: 5px;
+  }
+  .cart-item-info { flex-grow: 1; }
+  .cart-item-info h4 { margin: 0 0 5px; }
+  .qty-control button {
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+  .total-price {
+    text-align: right;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 10px;
+  }
+  form label { display: block; margin-top: 10px; font-weight: bold; }
+  form input, form textarea {
+    width: 100%; padding: 8px; margin-top: 5px;
+    border: 1px solid #ccc; border-radius: 4px;
+  }
+  select.size-select {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 3px;
+  }
+  .payment-options {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .payment-options label {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 8px;
+    flex: 1;
+    text-align: center;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .payment-options input { display: none; }
+  .payment-options input:checked + span {
+    background: #007bff;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  button.submit-btn {
+    margin-top: 20px;
+    background: #007bff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button.submit-btn:hover { background: #0056b3; }
+  .success-message {
+    text-align: center;
+    color: green;
+    margin-top: 15px;
+  }
+  .empty-cart {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 40px;
+    color: #777;
+  }
+</style>
 </head>
 <body>
-  <h2>🛒 অর্ডার ফর্ম</h2>
-  <form id="orderForm">
-    <input name="name" placeholder="নাম" required><br>
-    <input name="email" placeholder="ইমেইল" required><br>
-    <input name="phone" placeholder="মোবাইল" required><br>
-    <textarea name="address" placeholder="ঠিকানা" required></textarea><br>
-    <select name="size" required>
-      <option value="">সাইজ নির্বাচন করুন</option>
-      <option>S</option><option>M</option><option>L</option><option>XL</option>
-    </select><br>
-    <select name="payment" required>
-      <option>bKash</option><option>Nagad</option><option>COD</option>
-    </select><br>
-    <button type="submit">অর্ডার দিন</button>
-  </form>
 
-  <script>
-    document.getElementById("orderForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = {};
-      formData.forEach((value, key) => (data[key] = value));
+<h2>🛒 আপনার কার্ট ও চেকআউট</h2>
 
-      const res = await fetch("/api/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+<div id="cartItems"></div>
 
-      const msg = await res.text();
-      alert(msg);
-    });
-  </script>
+<h3>অর্ডার তথ্য</h3>
+<form id="orderForm">
+  <label for="name">নাম</label>
+  <input type="text" id="name" required />
+
+  <label for="email">ইমেইল</label>
+  <input type="email" id="email" required />
+
+  <label for="address">ঠিকানা</label>
+  <textarea id="address" rows="3" required></textarea>
+
+  <label>পেমেন্ট মেথড</label>
+  <div class="payment-options">
+    <label><input type="radio" name="payment" value="Card" /><span>💳 Card</span></label>
+    <label><input type="radio" name="payment" value="bKash" /><span>📱 bKash</span></label>
+    <label><input type="radio" name="payment" value="COD" /><span>💵 Cash On Delivery</span></label>
+  </div>
+
+  <button type="submit" class="submit-btn">✅ অর্ডার সাবমিট করুন</button>
+</form>
+
+<p class="success-message" id="successMessage"></p>
+
+<script>
+const DELIVERY_CHARGE = 100;
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  container.innerHTML = '';
+
+  if (cart.length === 0) {
+    container.innerHTML = '<p class="empty-cart">আপনার কার্ট খালি। <a href="index.html">শপিং চালিয়ে যান</a></p>';
+    return;
+  }
+
+  cart.forEach((item, index) => {
+    container.innerHTML += `
+      <div class="cart-item">
+        <img src="${item.img}" />
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <label>সাইজ:</label>
+          <select class="size-select" onchange="changeSize(${index}, this.value)">
+            ${['S','M','L','XL','XXL'].map(size => `
+              <option value="${size}" ${item.size === size ? 'selected' : ''}>${size}</option>
+            `).join('')}
+          </select>
+          <p>দাম: ৳${item.price}.00</p>
+          <div class="qty-control">
+            <button onclick="changeQty(${index}, -1)">-</button>
+            <span>${item.qty}</span>
+            <button onclick="changeQty(${index}, 1)">+</button>
+            <button onclick="removeItem(${index})" style="margin-left:10px;color:red;">❌</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const grandTotal = productTotal + DELIVERY_CHARGE;
+
+  container.innerHTML += `
+    <div class="total-price">পণ্যের মোট: ৳${productTotal}.00</div>
+    <div class="total-price">ডেলিভারি চার্জ: ৳${DELIVERY_CHARGE}.00</div>
+    <div class="total-price" style="color:#e91e63;font-size:20px;">সর্বমোট: ৳${grandTotal}.00</div>
+  `;
+}
+
+function changeSize(index, newSize) {
+  cart[index].size = newSize;
+  saveCart();
+}
+
+function changeQty(index, delta) {
+  cart[index].qty += delta;
+  if (cart[index].qty <= 0) cart.splice(index, 1);
+  saveCart();
+  renderCart();
+}
+
+function removeItem(index) {
+  cart.splice(index, 1);
+  saveCart();
+  renderCart();
+}
+
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  if (cart.length === 0) {
+    alert('কার্ট খালি!');
+    return;
+  }
+
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const address = document.getElementById('address').value.trim();
+  const payment = document.querySelector('input[name="payment"]:checked');
+
+  if (!payment) {
+    alert('পেমেন্ট মেথড সিলেক্ট করুন');
+    return;
+  }
+
+  const productTotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const grandTotal = productTotal + DELIVERY_CHARGE;
+
+  // Construct order message
+  let message = `নতুন অর্ডার:\n\n`;
+  message += `নাম: ${name}\n`;
+  message += `ইমেইল: ${email}\n`;
+  message += `ঠিকানা: ${address}\n`;
+  message += `পেমেন্ট মেথড: ${payment.value}\n\n`;
+  message += `পণ্যের বিবরণ:\n`;
+
+  cart.forEach((item, i) => {
+    message += `- ${item.name} (সাইজ: ${item.size}, পরিমাণ: ${item.qty}, দাম: ৳${item.price})\n`;
+  });
+
+  message += `\nমোট পণ্য মূল্য: ৳${productTotal}\n`;
+  message += `ডেলিভারি চার্জ: ৳${DELIVERY_CHARGE}\n`;
+  message += `সর্বমোট: ৳${grandTotal}\n`;
+
+  // Encode message for URL
+  const encodedMessage = encodeURIComponent(message);
+
+  // তোমার WhatsApp নম্বর এখানে বসাও, দেশের কোড সহ (যেমন: 88017xxxxxxx)
+  const phoneNumber = "8801752865115";
+
+  // WhatsApp URL তৈরি
+  const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+  // উইন্ডো খুলে WhatsApp URL এ পাঠাও
+  window.open(whatsappURL, '_blank');
+
+  // Success message দেখাও
+  document.getElementById('successMessage').textContent = '✅ অর্ডার মেসেজ WhatsApp-এ প্রস্তুত হয়েছে।';
+
+  // কার্ট ও ফর্ম রিসেট
+  localStorage.removeItem('cart');
+  cart = [];
+  renderCart();
+  document.getElementById('orderForm').reset();
+});
+
+renderCart();
+</script>
 </body>
-</html>
+  </html>
